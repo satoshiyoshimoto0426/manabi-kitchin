@@ -78,6 +78,11 @@
 
 ## 🚀 セットアップ
 
+> ### 👉 本番API接続・運用開始の詳細手順は **[docs/setup-guide/README.md](./docs/setup-guide/README.md)** を参照
+>
+> 00〜14 の連番ガイドを順に進めれば、IT専門家でなくても **ゼロから本番稼働** まで完遂できます。
+> 所要時間: Phase 1 MVP 約 4〜6時間 / 全Phase 2〜3日 + Document AI 訓練PoC 2週間
+
 ### 1. ローカル起動 (MOCK モード: 外部API未接続でフル動作)
 
 ```bash
