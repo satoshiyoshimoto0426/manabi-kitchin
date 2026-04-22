@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ManabiOps 研修スライド｜こども食堂の運営を楽にする仕組み</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reset.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/theme/white.css" id="theme">
+<style>
+  :root{
+    --brand:#2E7D32;        /* 緑 (食育) */
+    --brand-dark:#1B5E20;
+    --accent:#F57C00;       /* 温かいオレンジ */
+    --bg:#FFFDF7;
+    --text:#2C2C2C;
+    --muted:#6B6B6B;
+  }
+  .reveal{font-family:"Hiragino Kaku Gothic ProN","Yu Gothic UI","Noto Sans JP","Meiryo",sans-serif;color:var(--text)}
+  .reveal .slides{text-align:left}
+  .reveal section{padding:20px}
+  .reveal h1{color:var(--brand-dark);font-size:2.2em;letter-spacing:.02em}
+  .reveal h2{color:var(--brand);font-size:1.6em;border-bottom:4px solid var(--accent);padding-bottom:.2em;margin-bottom:.6em}
+  .reveal h3{color:var(--brand-dark);font-size:1.2em}
+  .reveal p,.reveal li{font-size:.85em;line-height:1.6}
+  .reveal .cover{background:linear-gradient(135deg,#E8F5E9 0%,#FFF3E0 100%);padding:80px 60px;border-radius:16px;text-align:center}
+  .reveal .cover h1{font-size:2.8em;margin-bottom:.3em}
+  .reveal .cover .sub{font-size:1.2em;color:var(--muted)}
+  .reveal .badge{display:inline-block;background:var(--accent);color:#fff;padding:4px 14px;border-radius:999px;font-size:.55em;vertical-align:middle;margin-left:10px}
+  .reveal .grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .reveal .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  .reveal .card{background:#fff;border:1px solid #E0E0E0;border-radius:12px;padding:16px 20px;box-shadow:0 2px 6px rgba(0,0,0,.04)}
+  .reveal .card h3{margin-top:0}
+  .reveal .card.green{border-left:6px solid var(--brand)}
+  .reveal .card.orange{border-left:6px solid var(--accent)}
+  .reveal .card.red{border-left:6px solid #C62828}
+  .reveal .card.blue{border-left:6px solid #1565C0}
+  .reveal table{font-size:.65em;border-collapse:collapse;width:100%}
+  .reveal th{background:var(--brand);color:#fff;padding:8px}
+  .reveal td{padding:6px 8px;border-bottom:1px solid #E0E0E0}
+  .reveal .big{font-size:1.8em;color:var(--brand-dark);font-weight:bold}
+  .reveal .accent{color:var(--accent);font-weight:bold}
+  .reveal .muted{color:var(--muted);font-size:.8em}
+  .reveal .arrow{font-size:1.4em;color:var(--accent);text-align:center}
+  .reveal .step{display:flex;gap:14px;align-items:flex-start;margin:8px 0}
+  .reveal .step .num{background:var(--brand);color:#fff;border-radius:50%;width:36px;height:36px;min-width:36px;display:flex;align-items:center;justify-content:center;font-weight:bold}
+  .reveal .quote{background:#FFF8E1;border-left:6px solid var(--accent);padding:14px 20px;font-style:italic;border-radius:8px}
+  .reveal .footer{position:absolute;bottom:12px;right:20px;font-size:12px;color:var(--muted)}
+  .reveal .tag{display:inline-block;background:#E8F5E9;color:var(--brand-dark);padding:2px 10px;border-radius:6px;font-size:.7em;margin:2px}
+  .reveal section.center{text-align:center}
+  .reveal .emoji{font-size:1.4em}
+  .reveal ul li::marker{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="reveal"><div class="slides">
+
+<!-- 01 Cover -->
+<section class="center">
+  <div class="cover">
+    <h1>ManabiOps</h1>
+    <div class="sub">こども食堂の運営を、LINEひとつで。</div>
+    <br>
+    <div class="big">事務作業を <span class="accent">月8時間→30分</span> に</div>
+    <br>
+    <p class="muted">学び舎キッチン 運営自動化プラットフォーム｜研修スライド v1.0</p>
+    <p class="muted">2026年4月 作成</p>
+  </div>
+  <div class="footer">ManabiOps © 学び舎キッチン</div>
+</section>
+
+<!-- 02 アジェンダ -->
+<section>
+  <h2>本日のアジェンダ（15分）</h2>
+  <div class="grid2">
+    <div class="card green">
+      <h3>🎯 この研修で分かること</h3>
+      <ul>
+        <li>ManabiOps が何をしてくれるか</li>
+        <li>日々の使い方（LINEに送るだけ）</li>
+        <li>困ったときの対処法</li>
+      </ul>
+    </div>
+    <div class="card orange">
+      <h3>📋 進行</h3>
+      <ol>
+        <li>課題と解決（3分）</li>
+        <li>機能ツアー（5分）</li>
+        <li>使い方デモ（5分）</li>
+        <li>Q&A（2分）</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- 03 課題 -->
+<section>
+  <h2>こんなお悩み、ありませんか？</h2>
+  <div class="grid3">
+    <div class="card red">
+      <h3>📒 経理</h3>
+      <p>領収書の山。月末に<br>エクセル入力で <span class="accent">3時間</span></p>
+    </div>
+    <div class="card red">
+      <h3>📝 名簿</h3>
+      <p>手書き参加者名簿を<br>毎回入力で <span class="accent">2時間</span></p>
+    </div>
+    <div class="card red">
+      <h3>📷 SNS</h3>
+      <p>写真の顔ぼかしと<br>投稿準備で <span class="accent">3時間</span></p>
+    </div>
+  </div>
+  <br>
+  <div class="quote">⏰ <b>合計 月8時間 超</b>、本来のこども対応に使えない…</div>
+</section>
+
+<!-- 04 解決 -->
+<section class="center">
+  <h2>ManabiOps が解決します</h2>
+  <div class="big">LINEで送る → AIが処理 → 自動で記録</div>
+  <br>
+  <div class="grid3">
+    <div class="card green">
+      <span class="emoji">📱</span><br>
+      <b>LINEで送るだけ</b><br>
+      <span class="muted">専用アプリ不要</span>
+    </div>
+    <div class="card green">
+      <span class="emoji">🤖</span><br>
+      <b>AIが自動分類</b><br>
+      <span class="muted">領収書・名簿・写真</span>
+    </div>
+    <div class="card green">
+      <span class="emoji">✅</span><br>
+      <b>ワンタップ承認</b><br>
+      <span class="muted">間違いは防ぐ</span>
+    </div>
+  </div>
+  <br>
+  <p class="accent" style="text-align:center;font-size:1.3em">👉 月8時間 → 月30分へ</p>
+</section>
+
+<!-- 05 Before/After -->
+<section>
+  <h2>Before / After</h2>
+  <table>
+    <tr><th>作業</th><th>Before（手作業）</th><th>After（ManabiOps）</th><th>削減</th></tr>
+    <tr><td>領収書入力</td><td>月3時間</td><td>LINE送信 + 承認 = <b>5分</b></td><td class="accent">-95%</td></tr>
+    <tr><td>参加者名簿入力</td><td>月2時間</td><td>写真1枚で <b>自動</b></td><td class="accent">-100%</td></tr>
+    <tr><td>SNS投稿準備</td><td>月3時間</td><td>写真選んで <b>承認のみ</b></td><td class="accent">-90%</td></tr>
+    <tr><td>月次集計</td><td>月1時間</td><td>毎月1日 <b>自動送信</b></td><td class="accent">-100%</td></tr>
+    <tr><th>合計</th><th>月9時間</th><th>月30分</th><th class="accent">-94%</th></tr>
+  </table>
+  <p class="muted">※当団体の試算。作業内容により差があります。</p>
+</section>
+
+<!-- 06 全体像 -->
+<section>
+  <h2>全体像：3つの入口・3つの出口</h2>
+  <div class="grid2">
+    <div>
+      <h3>📥 入口（スタッフがLINEに送る）</h3>
+      <ul>
+        <li>🧾 領収書の写真</li>
+        <li>📝 参加者名簿の写真</li>
+        <li>📷 活動中の写真・動画</li>
+      </ul>
+    </div>
+    <div>
+      <h3>📤 出口（AIが自動で作る）</h3>
+      <ul>
+        <li>📊 Google Sheets 会計台帳</li>
+        <li>🔐 Firestore 参加者DB（暗号化）</li>
+        <li>📱 Instagram 投稿（顔ぼかし済）</li>
+      </ul>
+    </div>
+  </div>
+  <div class="arrow">↓ 間に人のチェック（承認ボタン）が必ず入ります ↓</div>
+  <p style="text-align:center" class="accent">AIに任せきりにしない、安心設計</p>
+</section>
+
+<!-- 07 機能1: 経理 -->
+<section>
+  <h2>機能① 経理自動化 <span class="badge">FR-02/03</span></h2>
+  <div class="grid2">
+    <div>
+      <h3>🧾 こう動きます</h3>
+      <div class="step"><div class="num">1</div><div>領収書をスマホで撮影</div></div>
+      <div class="step"><div class="num">2</div><div>LINEで送信</div></div>
+      <div class="step"><div class="num">3</div><div>AIが店名・金額・日付を読取</div></div>
+      <div class="step"><div class="num">4</div><div>勘定科目を自動判定（食材費/消耗品等）</div></div>
+      <div class="step"><div class="num">5</div><div>「これで記帳？」の確認が届く</div></div>
+      <div class="step"><div class="num">6</div><div>✅承認 → Sheets へ自動記帳</div></div>
+    </div>
+    <div>
+      <h3>✨ ポイント</h3>
+      <ul>
+        <li>OCR精度が低い時は <b>手入力フォーム</b> に自動切替</li>
+        <li>重複検知（同じ領収書を2回送っても1回のみ）</li>
+        <li>月末自動集計（収支・科目別）</li>
+        <li>助成金報告書にそのまま使える形式</li>
+      </ul>
+      <div class="quote">💡 領収書を撮ったらすぐ送る。<br>溜めない運用が続くコツ。</div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 機能2: 名簿 -->
+<section>
+  <h2>機能② 参加者管理 <span class="badge">FR-04/05</span></h2>
+  <div class="grid2">
+    <div>
+      <h3>📝 こう動きます</h3>
+      <div class="step"><div class="num">1</div><div>当日の手書き名簿を撮影</div></div>
+      <div class="step"><div class="num">2</div><div>LINEで送信</div></div>
+      <div class="step"><div class="num">3</div><div>AIが手書き文字を認識</div></div>
+      <div class="step"><div class="num">4</div><div>氏名は即 <b>ハッシュ化＋暗号化</b></div></div>
+      <div class="step"><div class="num">5</div><div>Firestoreに安全に保存</div></div>
+    </div>
+    <div>
+      <h3>🔒 安心の仕組み</h3>
+      <ul>
+        <li><b>氏名はそのまま保存しません</b>（SHA-256ハッシュ）</li>
+        <li>復号キーは Secret Manager で厳重管理</li>
+        <li>AES-256-GCM 暗号化（銀行と同等）</li>
+        <li>閲覧は Owner/Staff のみ</li>
+        <li>保護者同意書テンプレート付属</li>
+      </ul>
+      <div class="quote">🛡 個人情報保護法・こども基本法に準拠</div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 機能3: SNS -->
+<section>
+  <h2>機能③ SNS投稿 <span class="badge">FR-06/07/08</span></h2>
+  <div class="grid2">
+    <div>
+      <h3>📷 こう動きます</h3>
+      <div class="step"><div class="num">1</div><div>活動写真・動画をLINEで送信</div></div>
+      <div class="step"><div class="num">2</div><div>AIが <b>全員の顔を自動ぼかし</b></div></div>
+      <div class="step"><div class="num">3</div><div>動画は縦向きリール編集＋BGM</div></div>
+      <div class="step"><div class="num">4</div><div>キャプションも自動生成</div></div>
+      <div class="step"><div class="num">5</div><div>プレビュー → ✅承認</div></div>
+      <div class="step"><div class="num">6</div><div>Instagram自動投稿</div></div>
+    </div>
+    <div>
+      <h3>✨ こだわり</h3>
+      <ul>
+        <li><b>顔ぼかしは二重チェック</b>（MediaPipe＋OpenCV）</li>
+        <li>1人でも顔が残れば投稿ブロック</li>
+        <li>ハッシュタグ自動付与（#こども食堂 等）</li>
+        <li>投稿前に必ず人間の目で確認</li>
+      </ul>
+      <div class="quote">🙈 「うっかり顔バレ」をシステムで防ぐ</div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 承認フロー -->
+<section>
+  <h2>人間中心の承認フロー <span class="badge">EX-12</span></h2>
+  <div style="text-align:center">
+    <p style="font-size:1.1em">AIは「下書き」を作るだけ。<br><span class="accent">最終判断は必ず人間</span>が行います。</p>
+  </div>
+  <div class="grid3">
+    <div class="card blue">
+      <h3>①AI提案</h3>
+      <p>LINEに「確認」カードが届く<br>
+      例：<br>「コープ ¥3,240<br>食材費 でOK？」</p>
+    </div>
+    <div class="card orange">
+      <h3>②人が確認</h3>
+      <p>ボタンは3つ<br>
+      ✅ 承認<br>
+      ✏ 修正<br>
+      ❌ 却下</p>
+    </div>
+    <div class="card green">
+      <h3>③記録</h3>
+      <p>承認後のみ<br>
+      Sheets/DB に<br>
+      書き込まれる</p>
+    </div>
+  </div>
+  <p class="muted" style="text-align:center">24時間以内の承認を推奨。リマインドも届きます。</p>
+</section>
+
+<!-- 11 役割 -->
+<section>
+  <h2>3つの役割</h2>
+  <table>
+    <tr><th>役割</th><th>できること</th><th>向いている人</th></tr>
+    <tr><td><b>Owner</b><br>(代表者1名)</td><td>全機能＋メンバー招待/削除＋削除操作</td><td>団体代表、会計責任者</td></tr>
+    <tr><td><b>Staff</b><br>(2-5名)</td><td>写真送信・承認・閲覧</td><td>常勤スタッフ、会計担当、広報担当</td></tr>
+    <tr><td><b>Viewer</b><br>(任意)</td><td>月次サマリーの閲覧のみ</td><td>理事、助成元、監事</td></tr>
+  </table>
+  <div class="quote">💡 初期は Owner 1名 + Staff 2名 がおすすめ。慣れてから広げましょう。</div>
+</section>
+
+<!-- 12 1日の流れ -->
+<section>
+  <h2>活動日1日の流れ（例）</h2>
+  <div class="grid2">
+    <div class="card green">
+      <h3>🌅 開催前（10:00）</h3>
+      <ul>
+        <li>食材買い出し → レシート撮影・送信</li>
+        <li>会場準備 → LINEに「開始」と送信</li>
+      </ul>
+    </div>
+    <div class="card orange">
+      <h3>🍚 開催中（12:00-14:00）</h3>
+      <ul>
+        <li>受付で手書き名簿記入</li>
+        <li>参加者に同意を得て写真撮影</li>
+        <li>活動名簿を撮影・送信</li>
+      </ul>
+    </div>
+    <div class="card blue">
+      <h3>🌇 開催後（15:00）</h3>
+      <ul>
+        <li>写真・動画をLINE送信</li>
+        <li>AIの確認カード3-4件に承認</li>
+        <li>Instagram投稿完了 🎉</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h3>📊 月初（翌月1日）</h3>
+      <ul>
+        <li>朝8時に月次サマリーが届く</li>
+        <li>Sheets で収支を最終確認</li>
+        <li>助成金報告書へコピペ</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 13 費用 -->
+<section>
+  <h2>費用の目安</h2>
+  <div class="grid2">
+    <div>
+      <h3>💰 月額コスト</h3>
+      <table>
+        <tr><th>項目</th><th>月額</th></tr>
+        <tr><td>LINE Messaging API</td><td>¥0（200通まで無料）</td></tr>
+        <tr><td>Google Cloud (AI/DB)</td><td>¥500-¥2,000</td></tr>
+        <tr><td>Instagram Graph API</td><td>¥0</td></tr>
+        <tr><th>合計</th><th class="accent">¥500-¥3,000</th></tr>
+      </table>
+      <p class="muted">※月4回開催・参加者30名/回の想定</p>
+    </div>
+    <div>
+      <h3>🎯 目標との比較</h3>
+      <p class="big">目標：月 ¥10,000以下</p>
+      <p class="big accent">実績：月 ¥500-¥3,000</p>
+      <br>
+      <div class="quote">助成金の「運営管理費」で<br>十分まかなえる水準です。</div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 安心安全 -->
+<section>
+  <h2>安心・安全への配慮</h2>
+  <div class="grid3">
+    <div class="card green">
+      <h3>🔐 個人情報</h3>
+      <ul>
+        <li>氏名ハッシュ化</li>
+        <li>AES-256暗号化</li>
+        <li>閲覧権限管理</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h3>🙈 肖像権</h3>
+      <ul>
+        <li>自動顔ぼかし</li>
+        <li>二重検出</li>
+        <li>投稿前人間確認</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h3>📜 法令遵守</h3>
+      <ul>
+        <li>個人情報保護法</li>
+        <li>こども基本法</li>
+        <li>保護者同意書付</li>
+      </ul>
+    </div>
+  </div>
+  <p style="text-align:center" class="accent">子どもたちの笑顔を、責任をもって届けます。</p>
+</section>
+
+<!-- 15 導入ステップ -->
+<section>
+  <h2>導入ステップ（目安）</h2>
+  <div class="grid2">
+    <div>
+      <h3>🚀 Phase 1: MVP (1日)</h3>
+      <ul>
+        <li>LINE Bot セットアップ</li>
+        <li>経理自動化 稼働開始</li>
+        <li>所要：<b>4-6時間</b></li>
+      </ul>
+    </div>
+    <div>
+      <h3>📈 Phase 2: フル機能 (2週間)</h3>
+      <ul>
+        <li>参加者OCR 精度調整</li>
+        <li>月次サマリー配信</li>
+        <li>所要：<b>PoC 2週間</b></li>
+      </ul>
+    </div>
+    <div>
+      <h3>📱 Phase 3: SNS自動化 (2-4週)</h3>
+      <ul>
+        <li>Instagram ビジネス連携審査</li>
+        <li>顔ぼかし・動画編集</li>
+      </ul>
+    </div>
+    <div>
+      <h3>🎯 本番運用</h3>
+      <ul>
+        <li>毎週の使い方はLINEだけ</li>
+        <li>月次で運用チェックリスト</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 16 困ったとき -->
+<section>
+  <h2>困ったときは？</h2>
+  <div class="grid2">
+    <div class="card blue">
+      <h3>📖 ドキュメント</h3>
+      <ul>
+        <li>機能説明書 <code>docs/features/</code>（10冊）</li>
+        <li>セットアップガイド <code>docs/setup-guide/</code>（15章）</li>
+        <li>FAQ 40問</li>
+      </ul>
+    </div>
+    <div class="card orange">
+      <h3>🆘 トラブル対応</h3>
+      <ul>
+        <li>OCR失敗 → 手入力フォームへ自動誘導</li>
+        <li>LINE通信エラー → 3回自動再試行</li>
+        <li>Instagram投稿失敗 → 管理画面に通知</li>
+        <li>月次レポートで健全性を可視化</li>
+      </ul>
+    </div>
+  </div>
+  <div class="quote" style="margin-top:20px">💬 わからないことは遠慮なく Owner に相談 → Owner → システム担当者の順で。</div>
+</section>
+
+<!-- 17 まとめ -->
+<section class="center">
+  <h2>まとめ</h2>
+  <div class="big">📱 LINEに送るだけ</div>
+  <div class="big">🤖 AIが下書きを作る</div>
+  <div class="big accent">✅ 最終判断は人間</div>
+  <br>
+  <p style="font-size:1.1em">事務作業 <span class="accent">月8時間 → 月30分</span><br>
+  浮いた時間で、もっと子どもたちと向き合える。</p>
+  <br>
+  <div class="quote">「こども食堂の価値は、人と人のふれあい。<br>
+  事務はAIに、想いは人に。」</div>
+</section>
+
+<!-- 18 Q&A -->
+<section class="center">
+  <div class="cover">
+    <h1>ご質問はありますか？</h1>
+    <br>
+    <p>💬 ありがとうございました</p>
+    <p class="muted">ManabiOps 研修スライド v1.0 / 学び舎キッチン</p>
+    <p class="muted">📁 <code>docs/features/</code> に詳しい資料があります</p>
+  </div>
+</section>
+
+</div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.js"></script>
+<script>
+  Reveal.initialize({
+    hash:true,
+    controls:true,
+    progress:true,
+    slideNumber:'c/t',
+    transition:'slide',
+    center:false,
+    width:1280,
+    height:800,
+    margin:0.04
+  });
+</script>
+</body>
+</html>
