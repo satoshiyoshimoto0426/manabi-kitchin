@@ -10,7 +10,9 @@
     "dev:node": "tsx src/index.ts",
     "lint": "echo 'lint skipped'",
     "test": "node --test dist/**/*.test.js || echo 'no tests yet'",
-    "seed": "tsx src/scripts/seed.ts"
+    "seed": "tsx src/scripts/seed.ts",
+    "setup:richmenu": "tsx scripts/setup-richmenu.ts",
+    "richmenu:images": "python3 scripts/generate_richmenu_images.py"
   },
   "engines": {
     "node": ">=20"

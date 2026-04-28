@@ -13,6 +13,11 @@ import {
   buildClassificationMenu,
   buildMainMenu,
   buildManualReceiptPrompt,
+  buildReceiptGuide,
+  buildRosterGuide,
+  buildPhotoGuide,
+  buildMembersAdmin,
+  buildEventCloseConfirm,
 } from './flex';
 import { classifyImage } from '../services/gemini';
 import { getMessageContent, replyMessage } from '../services/lineClient';
@@ -105,6 +110,49 @@ async function dispatch(ev: any) {
   if (ev.type === 'postback') {
     await handlePostback(ev, userId);
     return;
+  }
+  if (ev.type === 'follow') {
+    // 友だち追加時: 役割に応じてリッチメニューをリンク
+    const r = (auth.user?.role ?? 'Viewer').toLowerCase() as 'owner' | 'staff' | 'viewer';
+    await handleFollow(ev, userId, r);
+    return;
+  }
+  if (ev.type === 'unfollow') {
+    logger.info('user unfollowed', { userId });
+    return;
+  }
+}
+
+/** 友だち追加時のウェルカムメッセージ + 役割別メニュー設定 */
+async function handleFollow(ev: any, userId: string, role: 'owner' | 'staff' | 'viewer' | undefined) {
+  const r = role ?? 'viewer';
+  const welcomeText =
+    r === 'owner'
+      ? '🎉 ManabiOps へようこそ、Owner!\n下のメニューから「メンバー管理」「ダッシュボード」が使えます。'
+      : r === 'staff'
+      ? '🎉 ManabiOps へようこそ、スタッフのみなさん!\n下のメニューから領収書・名簿・写真を簡単に送信できます。'
+      : '👋 友だち追加ありがとうございます。\n運営代表者に承認されると、各種メニューが使えるようになります。';
+
+  if (ev.replyToken) {
+    await replyMessage(ev.replyToken, [
+      { type: 'text', text: welcomeText },
+      buildMainMenu() as any,
+    ]);
+  }
+
+  // 役割別リッチメニュー (環境変数からID取得)
+  try {
+    const { linkRichMenuByRole } = await import('./richMenu');
+    const menuIds = {
+      manabiops_main: process.env.RICHMENU_MAIN_ID ?? '',
+      manabiops_owner: process.env.RICHMENU_OWNER_ID ?? '',
+      manabiops_activity: process.env.RICHMENU_ACTIVITY_ID ?? '',
+    };
+    if (menuIds.manabiops_main) {
+      await linkRichMenuByRole(userId, r, menuIds);
+    }
+  } catch (e) {
+    logger.warn('rich menu link skipped', { err: (e as Error).message });
   }
 }
 
@@ -272,6 +320,77 @@ async function handlePostback(ev: any, userId: string) {
   }
   if (action === 'manual_receipt') {
     await replyMessage(ev.replyToken, [buildManualReceiptPrompt() as any]);
+    return;
+  }
+
+  // ===== リッチメニュー: 撮影ガイド =====
+  if (action === 'guide') {
+    const type = params.get('type');
+    if (type === 'receipt') {
+      await replyMessage(ev.replyToken, [buildReceiptGuide() as any]);
+      return;
+    }
+    if (type === 'roster') {
+      await replyMessage(ev.replyToken, [buildRosterGuide() as any]);
+      return;
+    }
+    if (type === 'photo') {
+      await replyMessage(ev.replyToken, [buildPhotoGuide() as any]);
+      return;
+    }
+  }
+
+  // ===== リッチメニュー: Owner専用 =====
+  if (action === 'members') {
+    const userAuth = await authorize(userId);
+    if (userAuth.user?.role !== 'Owner') {
+      await replyMessage(ev.replyToken, [{ type: 'text', text: '🚫 この機能はOwner専用です。' }]);
+      return;
+    }
+    await replyMessage(ev.replyToken, [buildMembersAdmin() as any]);
+    return;
+  }
+  if (action === 'expense_report') {
+    const s = await generateMonthlySummary();
+    await replyMessage(ev.replyToken, [
+      { type: 'text', text: '💰 経費レポート（当月）\n' + formatSummaryText(s) },
+    ]);
+    return;
+  }
+  if (action === 'sns_history') {
+    await replyMessage(ev.replyToken, [
+      { type: 'text', text: '📱 直近のSNS投稿履歴は管理画面でご確認ください。\n' + (process.env.ADMIN_URL ?? '') },
+    ]);
+    return;
+  }
+  if (action === 'alerts') {
+    await replyMessage(ev.replyToken, [
+      { type: 'text', text: '⚠ 現在のアラート一覧\n（実装中：管理画面で確認可能）' },
+    ]);
+    return;
+  }
+  if (action === 'switch_menu') {
+    const to = params.get('to');
+    await replyMessage(ev.replyToken, [
+      { type: 'text', text: to === 'main' ? '🔄 通常メニューに切り替えました。' : '🔄 メニューを切り替えました。' },
+    ]);
+    return;
+  }
+
+  // ===== 活動日メニュー: 終了報告 =====
+  if (action === 'event_close') {
+    await replyMessage(ev.replyToken, [buildEventCloseConfirm() as any]);
+    return;
+  }
+  if (action === 'event_close_confirm') {
+    const s = await generateMonthlySummary();
+    await replyMessage(ev.replyToken, [
+      { type: 'text', text: '✨ 本日の活動を終了しました。\n\n📊 当日サマリー:\n' + formatSummaryText(s) },
+    ]);
+    return;
+  }
+  if (action === 'event_close_cancel') {
+    await replyMessage(ev.replyToken, [{ type: 'text', text: '❌ キャンセルしました。活動を継続します。' }]);
     return;
   }
   if (action === 'pending') {

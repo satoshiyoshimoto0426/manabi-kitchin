@@ -338,3 +338,175 @@ function btn(style: 'primary' | 'secondary', label: string, data: string) {
     action: { type: 'postback', label, data, displayText: label },
   };
 }
+
+// =============================================================
+// リッチメニュー ガイド (FR-09 / docs/features/10_公式LINEとリッチメニュー.md)
+// =============================================================
+
+export function buildReceiptGuide() {
+  return {
+    type: 'flex',
+    altText: '🧾 領収書を送る方法',
+    contents: {
+      type: 'bubble',
+      header: {
+        type: 'box', layout: 'vertical',
+        backgroundColor: '#2E7D32', paddingAll: 'md',
+        contents: [{ type: 'text', text: '🧾 領収書を送る', color: '#FFFFFF', weight: 'bold', size: 'lg' }],
+      },
+      body: {
+        type: 'box', layout: 'vertical', spacing: 'sm',
+        contents: [
+          { type: 'text', text: '📷 簡単3ステップ', weight: 'bold', size: 'md', color: '#1B5E20' },
+          { type: 'text', text: '1. 「📎」をタップしカメラ起動', size: 'sm', wrap: true },
+          { type: 'text', text: '2. 領収書全体が枠内に収まるよう撮影', size: 'sm', wrap: true },
+          { type: 'text', text: '3. 送信ボタンを押す → 自動で記帳！', size: 'sm', wrap: true },
+          { type: 'separator', margin: 'md' },
+          { type: 'text', text: '💡 ヒント', weight: 'bold', size: 'sm', color: '#F57C00', margin: 'md' },
+          { type: 'text', text: '• 複数枚OK（連続送信可）', size: 'xs', color: '#666666' },
+          { type: 'text', text: '• 暗いと読み取り精度↓', size: 'xs', color: '#666666' },
+          { type: 'text', text: '• 折れ目はできるだけ伸ばして', size: 'xs', color: '#666666' },
+        ],
+      },
+      footer: {
+        type: 'box', layout: 'vertical', spacing: 'sm',
+        contents: [
+          { type: 'button', style: 'primary', color: '#2E7D32', height: 'sm',
+            action: { type: 'uri', label: '📷 カメラを起動', uri: 'line://nv/camera/' } },
+          { type: 'button', style: 'secondary', height: 'sm',
+            action: { type: 'postback', label: '✏ 手入力する', data: 'action=manual_receipt', displayText: '✏ 手入力する' } },
+        ],
+      },
+    },
+  };
+}
+
+export function buildRosterGuide() {
+  return {
+    type: 'flex',
+    altText: '📋 名簿を撮る方法',
+    contents: {
+      type: 'bubble',
+      header: {
+        type: 'box', layout: 'vertical',
+        backgroundColor: '#F57C00', paddingAll: 'md',
+        contents: [{ type: 'text', text: '📋 名簿を撮影', color: '#FFFFFF', weight: 'bold', size: 'lg' }],
+      },
+      body: {
+        type: 'box', layout: 'vertical', spacing: 'sm',
+        contents: [
+          { type: 'text', text: '📷 撮影のコツ', weight: 'bold', size: 'md', color: '#1B5E20' },
+          { type: 'text', text: '1. 真上から撮る（斜めはNG）', size: 'sm', wrap: true },
+          { type: 'text', text: '2. 氏名欄が読める明るさで', size: 'sm', wrap: true },
+          { type: 'text', text: '3. 紙全体が画面に収まるように', size: 'sm', wrap: true },
+          { type: 'separator', margin: 'md' },
+          { type: 'text', text: '🔒 安心', weight: 'bold', size: 'sm', color: '#F57C00', margin: 'md' },
+          { type: 'text', text: '氏名はAES-256で暗号化され、', size: 'xs', color: '#666666', wrap: true },
+          { type: 'text', text: '原本画像も処理後に削除されます。', size: 'xs', color: '#666666', wrap: true },
+        ],
+      },
+      footer: {
+        type: 'box', layout: 'vertical',
+        contents: [
+          { type: 'button', style: 'primary', color: '#F57C00', height: 'sm',
+            action: { type: 'uri', label: '📷 カメラを起動', uri: 'line://nv/camera/' } },
+        ],
+      },
+    },
+  };
+}
+
+export function buildPhotoGuide() {
+  return {
+    type: 'flex',
+    altText: '📷 活動写真を送る方法',
+    contents: {
+      type: 'bubble',
+      header: {
+        type: 'box', layout: 'vertical',
+        backgroundColor: '#1565C0', paddingAll: 'md',
+        contents: [{ type: 'text', text: '📷 活動写真・動画を送る', color: '#FFFFFF', weight: 'bold', size: 'lg' }],
+      },
+      body: {
+        type: 'box', layout: 'vertical', spacing: 'sm',
+        contents: [
+          { type: 'text', text: '📸 こんな写真がおすすめ', weight: 'bold', size: 'md', color: '#1B5E20' },
+          { type: 'text', text: '• 食事の様子・調理風景', size: 'sm', wrap: true },
+          { type: 'text', text: '• 完成した料理（顔なし）', size: 'sm', wrap: true },
+          { type: 'text', text: '• 全景・後ろ姿は積極的に', size: 'sm', wrap: true },
+          { type: 'separator', margin: 'md' },
+          { type: 'text', text: '🙈 顔ぼかしの仕組み', weight: 'bold', size: 'sm', color: '#F57C00', margin: 'md' },
+          { type: 'text', text: 'AIが全員の顔を自動でぼかします。', size: 'xs', color: '#666666', wrap: true },
+          { type: 'text', text: '1人でも顔が残ると投稿ブロック。', size: 'xs', color: '#666666', wrap: true },
+          { type: 'separator', margin: 'md' },
+          { type: 'text', text: '💡 動画は最大15秒推奨', size: 'xs', color: '#888888', margin: 'sm' },
+        ],
+      },
+      footer: {
+        type: 'box', layout: 'vertical',
+        contents: [
+          { type: 'button', style: 'primary', color: '#1565C0', height: 'sm',
+            action: { type: 'uri', label: '📷 カメラを起動', uri: 'line://nv/camera/' } },
+        ],
+      },
+    },
+  };
+}
+
+/** Owner専用: メンバー管理 */
+export function buildMembersAdmin() {
+  return {
+    type: 'flex',
+    altText: '👥 メンバー管理',
+    contents: {
+      type: 'bubble',
+      body: {
+        type: 'box', layout: 'vertical', spacing: 'md',
+        contents: [
+          { type: 'text', text: '👥 メンバー管理', weight: 'bold', size: 'xl', color: '#F57C00' },
+          { type: 'text', text: '管理画面で以下が行えます：', size: 'sm', color: '#666666' },
+          { type: 'text', text: '• 新規スタッフ招待', size: 'sm' },
+          { type: 'text', text: '• 役割変更 (Staff↔Owner)', size: 'sm' },
+          { type: 'text', text: '• アクセス停止/再開', size: 'sm' },
+        ],
+      },
+      footer: {
+        type: 'box', layout: 'vertical',
+        contents: [
+          { type: 'button', style: 'primary', color: '#F57C00', height: 'sm',
+            action: { type: 'uri', label: '管理画面を開く', uri: 'https://example.com/admin/members' } },
+        ],
+      },
+    },
+  };
+}
+
+/** 活動終了報告 */
+export function buildEventCloseConfirm() {
+  return {
+    type: 'flex',
+    altText: '✨ 活動終了報告',
+    contents: {
+      type: 'bubble',
+      body: {
+        type: 'box', layout: 'vertical', spacing: 'md',
+        contents: [
+          { type: 'text', text: '✨ 本日の活動を終了しますか？', weight: 'bold', size: 'lg' },
+          { type: 'text', text: '終了後、自動で以下が実行されます：', size: 'sm', color: '#666666', wrap: true },
+          { type: 'text', text: '✓ 当日の集計レポート生成', size: 'sm' },
+          { type: 'text', text: '✓ メニューを通常版に戻す', size: 'sm' },
+          { type: 'text', text: '✓ Owner にサマリー送信', size: 'sm' },
+        ],
+      },
+      footer: {
+        type: 'box', layout: 'vertical', spacing: 'sm',
+        contents: [
+          { type: 'button', style: 'primary', color: '#2E7D32', height: 'sm',
+            action: { type: 'postback', label: '✅ 終了する', data: 'action=event_close_confirm', displayText: '✅ 終了する' } },
+          { type: 'button', style: 'secondary', height: 'sm',
+            action: { type: 'postback', label: '❌ キャンセル', data: 'action=event_close_cancel', displayText: '❌ キャンセル' } },
+        ],
+      },
+    },
+  };
+}
