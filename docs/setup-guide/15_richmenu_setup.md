@@ -1,196 +1,260 @@
-# 第15章 リッチメニュー セットアップ（5分）
+# 第15章 リッチメニュー登録（5分）
 
-> 所要時間：5〜10分
-> 前提：第01章（LINE Messaging API）完了済
-> 対象：運営代表者またはシステム担当者
-> 関連：`docs/features/10_公式LINEとリッチメニュー.md` (設計思想)
-
----
-
-## このガイドで作るもの
-
-LINEトーク画面の下半分にいつも出ている「ボタン群」を3種類登録します。
-
-| 名前 | 表示対象 | ボタン数 |
-|------|----------|---------|
-| **main**（メイン） | Staff / Owner（デフォルト） | 6（3列×2段） |
-| **owner**（管理者用） | Owner専用に切替可 | 6（3列×2段） |
-| **activity**（活動日用） | 活動日の朝に自動切替 | 4（2列×2段・大ボタン） |
+> 対象：運営代表者・システム担当者
+> 所要時間：**5分**（画像が用意済の場合）
+> 前提：第01章「LINE Messaging API 接続」完了
 
 ---
 
-## ステップ1：画像を準備（既に同梱済）
+## 0. ゴール
 
-`deliverables/richmenu/` に以下3枚があります：
+LINEトーク画面の下半分に、**6ボタン**（Staff用）または **6ボタン**（Owner用）または **4大ボタン**（活動日用）の「リッチメニュー」を表示できるようにします。
 
 ```
-deliverables/richmenu/
-├─ main_menu.png       ← メイン (2500×1686 PNG)
-├─ owner_menu.png      ← Owner専用
-└─ activity_menu.png   ← 活動日用
+┌────────────────────────────────┐
+│   普通のチャット入力欄          │
+├────────────────────────────────┤
+│ 🧾領収書 │ 📋名簿 │ 📷写真      │
+│ 📊月次  │ 📮承認  │ ⚙ヘルプ    │ ← これがリッチメニュー
+└────────────────────────────────┘
 ```
 
-**カスタマイズしたい場合**：
+設計の詳細は `docs/features/10_公式LINEとリッチメニュー.md` をご覧ください。
+
+---
+
+## 1. 画像の準備（既に同梱済 or 自作）
+
+### A. 同梱画像をそのまま使う（推奨・最速）
 
 ```bash
-# 画像を再生成（色やラベル調整したいとき）
+ls deliverables/richmenu/
+# main_menu.png       (98 KB)
+# owner_menu.png      (111 KB)
+# activity_menu.png   (72 KB)
+# preview/            (AI生成版・確認用)
+```
+
+これらは `scripts/generate_richmenu_images.py` (Pillow + Noto Sans CJK) で生成済。
+日本語文字化けゼロ、LINE規定の **2500×1686 / 1MB以内** を満たします。
+
+### B. 画像を再生成したい
+
+```bash
 npm run richmenu:images
-# → scripts/generate_richmenu_images.py が走り、3枚を上書き
 ```
 
-ラベル文言を変えたい場合は `scripts/generate_richmenu_images.py` の `main_cells` 配列を編集してください。
+`scripts/generate_richmenu_images.py` を編集すれば配色・ラベル・絵文字を変更できます。
+
+### C. デザイナーに作ってもらう
+
+LINE公式の規定：
+| 項目 | 値 |
+|------|-----|
+| 推奨サイズ | 2500×1686 px |
+| 形式 | PNG または JPEG |
+| ファイルサイズ | **1MB以下** |
+| カラー | RGB（CMYK不可） |
+
+セル境界はAPIの `areas[]` で別途指定するので、画像内の罫線は装飾扱いです。
 
 ---
 
-## ステップ2：環境変数を確認
+## 2. LINE Messaging API への登録
 
-`.env` または Cloud Run の環境変数に以下が設定されていることを確認：
+### 2-1. 環境変数を確認
 
 ```bash
-LINE_CHANNEL_ACCESS_TOKEN=...   # 第01章で取得
-LINE_CHANNEL_SECRET=...
-ADMIN_URL=https://admin.example.com  # 任意
+# .env or Cloud Run 環境変数
+LINE_CHANNEL_ACCESS_TOKEN=xxxxxxxx....
+LINE_CHANNEL_SECRET=xxxxxxxxxxxx
+ADMIN_URL=https://your-cloud-run-url/admin   # OwnerメニューのダッシュボードURI
 ```
 
----
-
-## ステップ3：登録コマンドを実行
+### 2-2. 登録コマンド
 
 ```bash
-cd /path/to/webapp
+# 初回 / 再登録（既存削除→新規登録）
+npm run setup:richmenu -- --clean
+
+# 追加のみ（既存メニューを残す）
 npm run setup:richmenu
+
+# モック確認（実APIに触れない）
+MOCK_MODE=true npm run setup:richmenu
 ```
 
-成功すると以下のような出力：
+実行すると以下が出力されます：
 
 ```
-═══════════════════════════════════════════════
-  ManabiOps リッチメニュー セットアップ
-═══════════════════════════════════════════════
+✅ Rich menus registered successfully:
 
-✅ 全メニュー登録完了
+   manabiops_main         = richmenu-abcd1234...
+   manabiops_owner        = richmenu-efgh5678...
+   manabiops_activity     = richmenu-ijkl9012...
 
-📋 以下のIDを保存してください:
-
-  RICHMENU_MAIN_ID=richmenu-abc123def456
-  RICHMENU_OWNER_ID=richmenu-ghi789jkl012
-  RICHMENU_ACTIVITY_ID=richmenu-mno345pqr678
-
-💡 Secret Manager に保存:
-  echo -n "richmenu-abc123def456" | gcloud secrets create richmenu-main-id --data-file=-
-  echo -n "richmenu-ghi789jkl012" | gcloud secrets create richmenu-owner-id --data-file=-
-  echo -n "richmenu-mno345pqr678" | gcloud secrets create richmenu-activity-id --data-file=-
-
-🎉 完了！LINE Bot 友だち追加すると即座にメニューが表示されます。
+📁 IDs saved: deliverables/richmenu/rich-menu-ids.json
 ```
+
+### 2-3. 結果確認
+
+LINE 公式アカウントを開発者モードで確認：
+1. https://manager.line.biz/ → 該当アカウント
+2. 「ホーム」→「リッチメニュー」
+3. 3つのメニューが表示されていればOK
 
 ---
 
-## ステップ4：表示されたIDを保存
+## 3. メニューIDをサーバに反映
 
-### A. 開発環境（`.env`）
+### 本番（Cloud Run）
 
-```bash
-RICHMENU_MAIN_ID=richmenu-abc123def456
-RICHMENU_OWNER_ID=richmenu-ghi789jkl012
-RICHMENU_ACTIVITY_ID=richmenu-mno345pqr678
-```
-
-### B. 本番（Secret Manager）
-
-出力された `gcloud secrets create` コマンドをそのまま実行 → 完了。
-
-Cloud Run 側で参照する：
+**Secret Manager に登録**：
 
 ```bash
-gcloud run services update manabi-ops \
-  --update-secrets RICHMENU_MAIN_ID=richmenu-main-id:latest \
-  --update-secrets RICHMENU_OWNER_ID=richmenu-owner-id:latest \
-  --update-secrets RICHMENU_ACTIVITY_ID=richmenu-activity-id:latest
+# JSONそのまま登録
+gcloud secrets create RICH_MENU_IDS_JSON \
+  --data-file=deliverables/richmenu/rich-menu-ids.json
+
+# Cloud Run サービスに環境変数として注入
+gcloud run services update manabiops \
+  --update-secrets=RICH_MENU_IDS_JSON=RICH_MENU_IDS_JSON:latest
 ```
+
+### ローカル開発
+
+`deliverables/richmenu/rich-menu-ids.json` を webhook が自動で読み込むため、追加作業なし。
 
 ---
 
-## ステップ5：動作確認
+## 4. 役割別メニュー切り替えの動作確認
 
-1. **自分のLINEで公式アカウントを「友だち追加」**
-   - QRコードは LINE Official Account Manager → 友だち追加 から取得
-   - 初回追加者は自動的に Owner として登録（auth.tsのbootstrap）
+### 4-1. テストアカウントを作成
 
-2. **トーク画面下に6ボタンメニューが出るか確認**
+1. 公式LINEに友だち追加（個人LINEアカウントから）
+2. `/admin/users` でそのユーザーの role を `Owner` に設定
+3. 一度ブロック → ブロック解除 で `follow` イベントを再発火させる
 
-3. **各ボタンをタップ → ガイドFlex Messageが返ってくるか確認**
+webhook ログに以下が出れば成功：
 
-4. **🧾 領収書送信 をタップ → 「📷 カメラを起動」がカメラを起動するか確認**
-
----
-
-## トラブルシューティング
-
-### ❌ メニューが表示されない
-- 友だち追加から最大10秒程度遅延することがあります → 一度トークを閉じて再表示
-- それでも出ない時：`LINE Official Account Manager → リッチメニュー → 表示中のID` を確認
-
-### ❌ ボタンを押しても反応しない
-- Cloud Run のログを確認：`gcloud run logs read manabi-ops --limit 20`
-- Webhook URL が正しく登録されているか（第10章参照）
-- 署名検証エラー → `LINE_CHANNEL_SECRET` を再確認
-
-### ❌ 画像が荒く表示される
-- 画像サイズは **必ず 2500×1686** (PNG/JPG, 1MB以下)
-- AI生成版を使う場合：`deliverables/richmenu/preview/*_ai.png` も同サイズだが装飾が異なります
-
-### ❌ 古いメニューが残っている
-- 全削除：
-
-```bash
-# LINE CLI（messaging-api-cli）または直接API
-curl -X DELETE "https://api.line.me/v2/bot/richmenu/<ID>" \
-  -H "Authorization: Bearer $LINE_CHANNEL_ACCESS_TOKEN"
+```
+INFO rich menu linked on follow {"userId":"U....", "role":"owner"}
 ```
 
-  または管理画面：LINE Official Account Manager → リッチメニュー → 各メニューの「停止」
+### 4-2. 期待される表示
+
+| 役割 | 表示されるメニュー |
+|------|-----------------|
+| Owner | 👥メンバー / 📊ダッシュ / 💰経費 / 📱SNS / ⚠アラート / 🔄通常へ |
+| Staff | 🧾領収書 / 📋名簿 / 📷写真 / 📊月次 / 📮承認待ち / ⚙ヘルプ |
+| Viewer | （リッチメニューなし） |
 
 ---
 
-## メニュー切替の自動化（オプション）
+## 5. 活動日メニューに切り替える（Cloud Scheduler）
 
-### Cloud Scheduler で活動日メニューを朝8時に自動切替
+### 5-1. 切替APIエンドポイントを公開（管理用）
+
+`/admin/richmenu/activity` を Owner 認証付きで公開する想定（実装は admin/index.ts 参照）。
+
+### 5-2. Cloud Scheduler 設定例
 
 ```bash
-# 月曜と木曜の朝8時にactivityメニューに切替
-gcloud scheduler jobs create http richmenu-activity-on \
-  --location=asia-northeast1 \
-  --schedule="0 8 * * 1,4" \
+# 毎週土曜 8:00 JST に活動日メニューへ
+gcloud scheduler jobs create http switch-to-activity-menu \
+  --schedule="0 8 * * 6" \
   --time-zone="Asia/Tokyo" \
-  --uri="https://manabi-ops-xxx.run.app/tasks/richmenu/activity-on" \
+  --uri="https://manabiops-xxxx.a.run.app/admin/richmenu/activity" \
   --http-method=POST \
-  --oidc-service-account-email=scheduler-sa@PROJECT.iam.gserviceaccount.com
+  --oidc-service-account-email=scheduler@PROJECT.iam.gserviceaccount.com
 
-# 同日17時に通常メニューに戻す
-gcloud scheduler jobs create http richmenu-activity-off \
-  --location=asia-northeast1 \
-  --schedule="0 17 * * 1,4" \
+# 毎週土曜 18:00 JST に通常メニューへ戻す
+gcloud scheduler jobs create http switch-back-main-menu \
+  --schedule="0 18 * * 6" \
   --time-zone="Asia/Tokyo" \
-  --uri="https://manabi-ops-xxx.run.app/tasks/richmenu/activity-off" \
+  --uri="https://manabiops-xxxx.a.run.app/admin/richmenu/main" \
   --http-method=POST \
-  --oidc-service-account-email=scheduler-sa@PROJECT.iam.gserviceaccount.com
+  --oidc-service-account-email=scheduler@PROJECT.iam.gserviceaccount.com
 ```
 
-エンドポイント実装は `src/index.ts` に追加する形で拡張可能です。
+詳細は `docs/setup-guide/11_cloud_scheduler.md`。
 
 ---
 
-## 章まとめチェックリスト
+## 6. トラブルシューティング
 
-- [ ] `deliverables/richmenu/*.png` を確認した
-- [ ] `npm run setup:richmenu` が成功した
-- [ ] 3つのIDをメモ／Secret Managerに保存した
-- [ ] 環境変数を Cloud Run に反映した
-- [ ] 友だち追加でメニューが表示される
-- [ ] 各ボタンが正しいFlex Messageを返す
-- [ ] （任意）Cloud Scheduler で活動日切替を設定
+### Q. 「rich menu image not found」エラーが出る
+- A. `deliverables/richmenu/main_menu.png` が無い。
+  → `npm run richmenu:images` を実行してから再度 `npm run setup:richmenu`
+
+### Q. 「Invalid rich menu image size (Status 400)」
+- A. 画像が 1MB を超えている。
+  → Pillow版（98 KB）を使うか、ImageMagick で圧縮：
+  ```bash
+  convert input.png -quality 85 -resize 2500x1686 output.png
+  ```
+
+### Q. メニューは登録されたが、表示されない
+1. Default rich menu が設定されているか確認：
+   ```bash
+   curl -H "Authorization: Bearer $LINE_CHANNEL_ACCESS_TOKEN" \
+     https://api.line.me/v2/bot/user/all/richmenu
+   ```
+2. ユーザーがブロック解除して再friends追加すると即反映
+
+### Q. ボタンを押しても何も起きない
+1. webhook URL が正しく設定されているか（第10章 参照）
+2. Cloud Run のログで `postback` イベントを確認
+3. Postback の `action=` の値が `webhook.ts` の `handlePostback` に存在するか
+
+### Q. Postback 408 タイムアウト
+- A. `webhook.ts` で重い処理を await している。
+  → 即時 `res.status(200).send('ok')` 後に async で処理する設計（既に対応済）
 
 ---
 
-➡️ 次：第13章「Troubleshooting」で運用中のトラブル対応を確認
+## 7. 改廃・移行
+
+### 既存リッチメニューがある場合
+
+```bash
+# 既存をすべて削除して新規登録
+npm run setup:richmenu -- --clean
+```
+
+### A/Bテストしたい場合
+
+`src/line/richMenu.ts` の `MENU_MAIN` を複製して `MENU_MAIN_B` を定義 →
+特定ユーザーIDだけ `linkRichMenuToUser` で B にリンク → 1週間後にデータ比較。
+
+### 完全に削除したい
+
+```typescript
+import { cleanupRichMenus } from './src/line/richMenu';
+await cleanupRichMenus();
+```
+
+---
+
+## ✅ チェックリスト
+
+- [ ] `deliverables/richmenu/main_menu.png` 等3画像が存在
+- [ ] `LINE_CHANNEL_ACCESS_TOKEN` / `LINE_CHANNEL_SECRET` 設定済
+- [ ] `npm run setup:richmenu -- --clean` 成功
+- [ ] `rich-menu-ids.json` が生成された
+- [ ] LINE Manager で3メニュー表示確認
+- [ ] 自分のスマホで実際にメニュー表示・タップで動作確認
+- [ ] Owner役のテストユーザーで Owner メニュー切替確認
+- [ ] (本番) Secret Manager に `RICH_MENU_IDS_JSON` 登録
+- [ ] (本番) Cloud Run に環境変数として注入
+- [ ] (任意) Cloud Scheduler で活動日メニュー自動切替
+
+---
+
+📚 関連
+- `docs/features/10_公式LINEとリッチメニュー.md` — 設計思想・UX原則
+- `docs/setup-guide/01_line_messaging_api.md` — LINE公式アカウント開設
+- `docs/setup-guide/10_line_webhook.md` — webhook URL設定
+- `docs/setup-guide/11_cloud_scheduler.md` — 自動切替の設定
+- `src/line/richMenu.ts` — 実装コード
+- `scripts/setup-richmenu.ts` — 登録スクリプト

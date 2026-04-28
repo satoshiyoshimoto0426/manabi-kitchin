@@ -3,6 +3,8 @@
  * 要件定義 FR-01/05/09, EX-02/10 準拠
  */
 import * as crypto from 'crypto';
+import * as fs from 'fs';
+import * as path from 'path';
 import { Request, Response } from 'express';
 import { env, isMocked } from '../config/env';
 import { logger } from '../utils/logger';
@@ -28,6 +30,29 @@ import { processRoster, confirmRosterApproval } from '../core/rosterPipeline';
 import { processEventPhoto, confirmPostApproval } from '../core/photoPipeline';
 import { generateMonthlySummary, formatSummaryText } from '../core/summary';
 import type { MediaDoc } from '../types/domain';
+
+/** リッチメニューID マッピングを読み込む (setup-richmenu スクリプトが生成) */
+function loadRichMenuIds(): Record<string, string> | null {
+  // 1) 環境変数で直接渡される場合（Cloud Run推奨）
+  const env1 = process.env.RICH_MENU_IDS_JSON;
+  if (env1) {
+    try {
+      return JSON.parse(env1);
+    } catch {
+      logger.warn('RICH_MENU_IDS_JSON invalid');
+    }
+  }
+  // 2) ローカルファイル（開発時）
+  try {
+    const p = path.resolve(process.cwd(), 'deliverables/richmenu/rich-menu-ids.json');
+    if (fs.existsSync(p)) {
+      return JSON.parse(fs.readFileSync(p, 'utf-8'));
+    }
+  } catch {
+    /* noop */
+  }
+  return null;
+}
 
 /** 署名検証 (LINE x-line-signature) */
 export function verifySignature(rawBody: Buffer | string, signature: string | undefined): boolean {
@@ -88,7 +113,7 @@ async function dispatch(ev: any) {
     return;
   }
 
-  // follow イベント (友だち追加) → ウェルカム
+  // follow イベント (友だち追加) → ウェルカム + 役割別リッチメニューリンク
   if (ev.type === 'follow') {
     await replyMessage(ev.replyToken, [
       {
@@ -100,6 +125,18 @@ async function dispatch(ev: any) {
       },
       buildMainMenu() as any,
     ]);
+    // 役割別リッチメニュー自動リンク
+    try {
+      const role = (auth.user?.role ?? 'staff').toLowerCase() as 'owner' | 'staff' | 'viewer';
+      const menuIds = loadRichMenuIds();
+      if (menuIds) {
+        const { linkRichMenuByRole } = await import('./richMenu');
+        await linkRichMenuByRole(userId, role, menuIds);
+        logger.info('rich menu linked on follow', { userId, role });
+      }
+    } catch (e) {
+      logger.warn('rich menu link failed on follow', { err: (e as Error).message });
+    }
     return;
   }
 
