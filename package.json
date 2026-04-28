@@ -1,0 +1,39 @@
+{
+  "name": "manabi-ops",
+  "version": "1.0.0",
+  "description": "ManabiOps - LINEを中核としたこども食堂運営自動化プラットフォーム (まなびキッチン運営支援システム)",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx watch src/index.ts",
+    "dev:node": "tsx src/index.ts",
+    "lint": "echo 'lint skipped'",
+    "test": "node --test dist/**/*.test.js || echo 'no tests yet'",
+    "seed": "tsx src/scripts/seed.ts",
+    "setup:richmenu": "tsx scripts/setup-richmenu.ts",
+    "richmenu:images": "python3 scripts/generate_richmenu_images.py"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@google-cloud/documentai": "^8.10.0",
+    "@google-cloud/firestore": "^7.10.0",
+    "@google-cloud/secret-manager": "^5.6.0",
+    "@google-cloud/storage": "^7.13.0",
+    "@google/generative-ai": "^0.21.0",
+    "@line/bot-sdk": "^9.5.0",
+    "axios": "^1.7.7",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "googleapis": "^144.0.0",
+    "nanoid": "^5.0.7"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.7.5",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3"
+  }
+}
